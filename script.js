@@ -34,7 +34,7 @@ function showResults(containerId, results) {
         html += `
             <div class="result-item">
                 <h4>${key}</h4>
-                <div class="result-value">${typeof value === 'number' ? value.toFixed(4) : value}</div>
+                <div class="result-value">${typeof value === 'number' ? value.toFixed(2) : value}</div>
             </div>
             `;
     }
@@ -123,7 +123,7 @@ function calculateMM1N() {
         [`Probabilidad de que haya ${lambda} clientes en el sistema`]: `${pn.toFixed(4)} (${(pn * 100).toFixed(2)}%)`
     };
 
-    showResults('results_mm1', results);
+    showResults('results_mm1n', results);
 }
 
 
@@ -141,73 +141,67 @@ function calculateMM1N() {
 
 // M/M/2
 
-// M/G/1 (VER BIEN DESPUES)
+// M/G/1
+// M/G/1 (versión solo en horas)
 function calculateMG1() {
     const lambda = parseFloat(document.getElementById('lambda_mg1').value);
     const es = parseFloat(document.getElementById('es_mg1').value);
-    const sigma = parseFloat(document.getElementById('sigma_mg1').value);
-    const unidad = document.getElementById('unidad_mg1').value;
+    const varianza = parseFloat(document.getElementById('sigma_mg1').value); // ya es varianza σ²
 
-
-    //validar inputs
-    if (isNaN(lambda) || isNaN(es) || isNaN(sigma) || lambda <= 0 || es <= 0 || sigma <= 0) {
-        showError('results_mg1', 'Ingresá valores válidos y mayores a 0 para λ, E(s) y ϭ.');
+    // Validación
+    if (isNaN(lambda) || isNaN(es) || isNaN(varianza) || lambda <= 0 || es <= 0 || varianza <= 0) {
+        showError('results_mg1', 'Ingresá valores válidos y mayores a 0 para λ, E(s) y la varianza.');
         return;
     }
 
-    //convertir a horas si el usuario eligio "minutos"
-    let lambda_horas = lambda;
-    let es_horas = es;
-    let sigma_horas = sigma;
+    const mu = 1 / es;
+    const rho = lambda * es;
 
-    if (unidad === 'minutos') {
-        lambda_horas = lambda / 60;
-        es_horas = es / 60;
-        sigma_horas = sigma / 60;
-    }
-
-        // validar que el sistema sea estable
-    if ((lambda_horas * es_horas) >= 1) {
+    if (rho >= 1) {
         showError('results_mg1', 'Para que el sistema sea estable, λ × E(s) debe ser menor a 1.');
         return;
     }
-    // --- Fórmulas corregidas ---
-    const rho = lambda_horas * es_horas;
 
-    const lq = ((lambda_horas ** 2) * (sigma_horas ** 2) + (rho ** 2)) / (2 * (1 - rho));
-    const wq = lq / lambda_horas;
-    const ws = wq + es_horas;
-    const ls = lambda_horas * ws;
+    // Cálculos según fórmula del apunte
+    const en = (rho / (1 - rho)) * (1 - (rho / 2) * (1 - mu ** 2 * varianza));
+    const et = en / lambda;
 
     const results = {
-        'Utilización del Sistema (ρ)': `${rho.toFixed(4)} (${(rho * 100).toFixed(2)}%)`,
-        'Tiempo promedio en cola (Wq)': `${wq.toFixed(4)} horas (${(wq * 60).toFixed(1)} min)`,
-        'Tiempo promedio en sistema (Ws)': `${ws.toFixed(4)} horas (${(ws * 60).toFixed(1)} min)`,
-        'Clientes promedio en cola (Lq)': lq.toFixed(4),
-        'Clientes promedio en sistema (Ls)': ls.toFixed(4)
+        'Utilización del Sistema (ρ)': `${rho.toFixed(2)} (${(rho * 100).toFixed(2)}%)`,
+        'Clientes promedio en el sistema (E(n))': en.toFixed(2),
+        'Tiempo promedio en el sistema (E(T))': `${et.toFixed(2)} horas (${(et * 60).toFixed(1)} min)`,
+        'Mu (1/E(s))': `${mu.toFixed(2)}`
     };
 
     showResults('results_mg1', results);
+}
 
-
-/*
-
-
-    // formulas m/g/1
-    const mu = 1 / lambda;
-    const rho = lambda / mu;
-    const et = [1 / (mu * (1 - rho))] * [1 - (rho / 2) * (1 -((mu **2) * (sigma ** 2)))];
-    const en = (rho / (1 - rho)) * [1 - ((rho / 2) * (1 - ((mu ** 2) * (sigma ** 2))))];
-
-    const results = {
-        'Utilización del Sistema (ρ)': rho,
-        'Promedio de clientes en el sistema E(n)': en,
-        'Promedio del tiempo que un cliente esta en el sistema': et,
-    };
-
-    showResults('results_mg1', results);
-*/
 
 // M/D/1
+function calculateMD1() {
+  const lambda = parseFloat(document.getElementById('lambda_md1').value);
+  const mu     = parseFloat(document.getElementById('mu_md1').value);
 
+  if (isNaN(lambda) || isNaN(mu) || lambda <= 0 || mu <= 0) {
+    showError('results_md1', 'Ingresá valores mayores a 0 para λ y μ.');
+    return;
+  }
+  if (lambda >= mu) {
+    showError('results_md1', 'Para que el sistema sea estable, λ debe ser menor que μ.');
+    return;
+  }
+
+  const rho = lambda / mu;
+
+  const en = (rho / (1 - rho)) * (1 - (rho / 2));  // E(n)
+  const et = en / lambda;                          // E(T)
+
+  const results = {
+    'Utilización del Sistema (ρ)': `${rho.toFixed(2)} (${(rho * 100).toFixed(2)}%)`,
+    'Clientes promedio en el sistema E(n)': en.toFixed(2),
+    'Tiempo promedio en el sistema E(T)': `${et.toFixed(2)} horas (${(et * 60).toFixed(1)} min)`
+  };
+
+  showResults('results_md1', results);
 }
+

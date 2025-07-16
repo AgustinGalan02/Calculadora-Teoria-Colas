@@ -1,145 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
 
     <title>Calculadora</title>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <h1>Calculadora de Teoria de Colas</h1>
+      <div class="header">
+        <h1>Calculadora de Teoria de Colas</h1>
+      </div>
+
+      <div class="main-content">
+        <!--Seleccion de calculadora-->
+        <div class="model-selector">
+          <button class="model-btn active" onclick="selectModel('mm1')">
+            M/M/1
+          </button>
+          <button class="model-btn" onclick="selectModel('mm1n')">
+            M/M/1/N
+          </button>
+          <button class="model-btn" onclick="selectModel('mm2')">M/M/2</button>
+          <button class="model-btn" onclick="selectModel('mg1')">M/G/1</button>
+          <button class="model-btn" onclick="selectModel('md1')">M/D/1</button>
         </div>
 
-        <div class="main-content">
-            <!--Seleccion de calculadora-->
-            <div class="model-selector">
-                <button class="model-btn active" onclick="selectModel('mm1')">M/M/1</button>
-                <button class="model-btn" onclick="selectModel('mm1n')">M/M/1/N</button>
-                <button class="model-btn" onclick="selectModel('mm2')">M/M/2</button>
-                <button class="model-btn" onclick="selectModel('mg1')">M/G/1</button>
-                <button class="model-btn" onclick="selectModel('md1')">M/D/1</button>
+        <!--Calculadora M/M/1-->
+        <div id="mm1" class="calculator-section active">
+          <div class="formula-info">
+            <h4>Modelo M/M/1</h4>
+            <p>
+              Sistema con un <b>solo servidor</b>, llegadas <b>Poisson</b>,
+              tiempos de servicio <b>exponenciales</b> y capacidad
+              <b>infinita</b>
+            </p>
+          </div>
+          <div class="form-grid">
+            <div class="input-group">
+              <h3>Parametros del Sistema (en horas)</h3>
+
+              <!--lambda-->
+              <div class="form-field">
+                <label>Tasa de Llegadas (λ)</label>
+                <input
+                  type="number"
+                  id="lambda_mm1"
+                  min="0"
+                  placeholder="Ej: 2"
+                />
+              </div>
+
+              <!--mu-->
+              <div class="form-field">
+                <label>Tasa de Servicio (μ)</label>
+                <input type="number" id="mu_mm1" min="0" placeholder="Ej: 5" />
+              </div>
             </div>
-
-            
-            <!--Calculadora M/M/1-->
-            <div id="mm1" class="calculator-section active">
-                <div class="formula-info">
-                    <h4>Modelo M/M/1</h4>
-                    <p>Sistema con un <b>solo servidor</b>, llegadas <b>Poisson</b>, tiempos de servicio <b>exponenciales</b> y capacidad <b>infinita</b></p>
-                </div>
-                <div class="form-grid">
-                    <div class="input-group">
-                        <h3>Parametros del Sistema (en horas)</h3>
-
-                        <!--lambda-->
-                        <div class="form-field">
-                            <label>Tasa de Llegadas (λ)</label>
-                            <input type="number" id="lambda_mm1" min="0" placeholder="Ej: 2">
-                        </div>
-
-                        <!--mu-->
-                        <div class="form-field">
-                            <label>Tasa de Servicio (μ)</label>
-                            <input type="number" id="mu_mm1" min="0" placeholder="Ej: 5">
-                        </div>
-
-                    </div>
-                </div>
-                <!--boton para calcular-->
-                <button class="calculate-btn" onclick="calculateMM1()">Calcular M/M/1</button>
-                <div id="results_mm1" class="results" style="display: none;"></div>
-            </div>
-
-            <!--Calculadora M/M/1/N-->
-            <div id="mm1n" class="calculator-section">
-                <div class="formula-info">
-                    <h4>Modelo M/M/1/N</h4>
-                    <p>Sistema con un <b>solo servidor</b>, llegadas <b>Poisson</b>, tiempos de servicio <b>exponenciales</b> y capacidad limitada a <b>N clientes.</b></p>
-                </div>
-                <div class="form-grid">
-                    <div class="input-group">
-                        <h3>Parametros del Sistema (en horas)</h3>
-
-                        <!--lambda-->
-                        <div class="form-field">
-                            <label>Tasa de Llegadas (λ)</label>
-                            <input type="number" id="lambda_mm1n" min="0" placeholder="Ej: 2">
-                        </div>
-
-                        <!--mu-->
-                        <div class="form-field">
-                            <label>Tasa de Servicio (μ)</label>
-                            <input type="number" id="mu_mm1n" min="0" placeholder="Ej: 5">
-                        </div>
-
-                        <!--n-->
-                        <div class="form-field">
-                            <label>Capacidad máxima (N)</label>
-                            <input type="number" id="n_mm1n" min="0" placeholder="Ej: 7">
-                        </div>
-
-                    </div>
-                </div>
-                <!--boton para calcular-->
-                <button class="calculate-btn" onclick="calculateMM1N()">Calcular M/M/1</button>
-                <div id="results_mm1n" class="results" style="display: none;"></div>
-            </div>
-
-
-            <!--Calculadora M/M/2-->
-
-            <!--Calculadora M/G/1-->
-            <div id="mg1" class="calculator-section">
-                <div class="formula-info">
-                    <h4>Modelo M/G/1</h4>
-                    <p>Sistema con un <b>solo servidor</b> , llegadas <b>Poisson</b> y tiempos de servicio con <b>distribucion general</b>.</p>
-                </div>
-                <div class="form-grid">
-
-                    <div class="input-group">
-                        <h3>Parametros del Sistema</h3>
-
-                        <!--seleccionar unidad de tiempo (minutos/horas)-->
-                        <div class="form-field">
-                            <label>Unidad de tiempo</label>
-                            <select id="unidad_mg1">
-                            <option value="horas" selected>Horas</option>
-                            <option value="minutos" selected>Minutos</option>
-                            </select>
-                        </div>
-
-                        <!--lambda-->
-                        <div class="form-field">
-                            <label>Tasa de llegada (λ)</label>
-                            <input type="number" id="lambda_mg1" min="0" max="100" placeholder="Ej: 2">
-                        </div>
-
-                        <!--es-->
-                        <div class="form-field">
-                            <label>Promedio que tarda el sistema en atender un cliente <b>E(s)</b></label>
-                            <input type="number" id="es_mg1" min="0" max="100" placeholder="Ej: 2">
-                        </div>
-
-                        <!--sigma (tardanza)-->
-                        <div class="form-field">
-                            <label>Varianza del tiempo de servicio (ϭ)</label>
-                            <input type="number" id="sigma_mg1" min="0" max="120" placeholder="Ej: 5">
-                        </div>
-
-                    </div>
-                </div>
-                <button class="calculate-btn" onclick="calculateMG1()">Calcular M/G/1</button>
-                <div id="results_mg1" class="results" style="display: none;"></div>
-            </div>
-
-            <!--Calculadora M/D/1-->
-            
+          </div>
+          <!--boton para calcular-->
+          <button class="calculate-btn" onclick="calculateMM1()">
+            Calcular M/M/1
+          </button>
+          <div id="results_mm1" class="results" style="display: none"></div>
         </div>
+
+        <!--Calculadora M/M/1/N-->
+        <div id="mm1n" class="calculator-section">
+          <div class="formula-info">
+            <h4>Modelo M/M/1/N</h4>
+            <p>
+              Sistema con un <b>solo servidor</b>, llegadas <b>Poisson</b>,
+              tiempos de servicio <b>exponenciales</b> y capacidad limitada a
+              <b>N clientes.</b>
+            </p>
+          </div>
+          <div class="form-grid">
+            <div class="input-group">
+              <h3>Parametros del Sistema (en horas)</h3>
+
+              <!--lambda-->
+              <div class="form-field">
+                <label>Tasa de Llegadas (λ)</label>
+                <input
+                  type="number"
+                  id="lambda_mm1n"
+                  min="0"
+                  placeholder="Ej: 2"
+                />
+              </div>
+
+              <!--mu-->
+              <div class="form-field">
+                <label>Tasa de Servicio (μ)</label>
+                <input type="number" id="mu_mm1n" min="0" placeholder="Ej: 5" />
+              </div>
+
+              <!--n-->
+              <div class="form-field">
+                <label>Capacidad máxima (N)</label>
+                <input type="number" id="n_mm1n" min="0" placeholder="Ej: 7" />
+              </div>
+            </div>
+          </div>
+          <!--boton para calcular-->
+          <button class="calculate-btn" onclick="calculateMM1N()">
+            Calcular M/M/1
+          </button>
+          <div id="results_mm1n" class="results" style="display: none"></div>
+        </div>
+
+        <!--Calculadora M/M/2-->
+
+        <!--Calculadora M/G/1-->
+        <div id="mg1" class="calculator-section">
+          <div class="formula-info">
+            <h4>Modelo M/G/1</h4>
+            <p>
+              Sistema con un <b>solo servidor</b> , llegadas <b>Poisson</b> y
+              tiempos de servicio con <b>distribucion general</b>.
+            </p>
+          </div>
+          <div class="form-grid">
+            <div class="input-group">
+              <h3>Parametros del Sistema (en horas)</h3>
+
+              <!--lambda-->
+              <div class="form-field">
+                <label>Tasa de llegada (λ)</label>
+                <input
+                  type="number"
+                  id="lambda_mg1"
+                  min="0"
+                  max="100"
+                  placeholder="Ej: 2"
+                />
+              </div>
+
+              <!--es-->
+              <div class="form-field">
+                <label
+                  >Promedio que tarda el sistema en atender un cliente
+                  <b>E(s)</b></label
+                >
+                <input
+                  type="number"
+                  id="es_mg1"
+                  min="0"
+                  max="100"
+                  placeholder="Ej: 2"
+                />
+              </div>
+
+              <!--sigma (tardanza)-->
+              <div class="form-field">
+                <label>Varianza del tiempo de servicio (ϭ)</label>
+                <input
+                  type="number"
+                  id="sigma_mg1"
+                  min="0"
+                  max="120"
+                  placeholder="Ej: 5"
+                />
+              </div>
+            </div>
+          </div>
+          <button class="calculate-btn" onclick="calculateMG1()">
+            Calcular M/G/1
+          </button>
+          <div id="results_mg1" class="results" style="display: none"></div>
+        </div>
+
+        <!--Calculadora M/D/1-->
+        <div id="md1" class="calculator-section">
+          <div class="formula-info">
+            <h4>Modelo M/D/1</h4>
+            <p>
+              Sistema con un <b>solo servidor</b>, llegadas <b>Poisson</b> y
+              tiempos de servicio <b>determinísticos</b>.
+            </p>
+          </div>
+
+          <div class="form-grid">
+            <div class="input-group">
+              <h3>Parámetros del Sistema (en horas)</h3>
+
+              <!--lambda-->
+              <div class="form-field">
+                <label>Tasa de llegadas (λ)</label>
+                <input
+                  type="number"
+                  id="lambda_md1"
+                  min="0"
+                  placeholder="Ej: 3"
+                />
+              </div>
+
+              <!--mu-->
+              <div class="form-field">
+                <label>Tasa de servicio (μ)</label>
+                <input type="number" id="mu_md1" min="0" placeholder="Ej: 5" />
+              </div>
+            </div>
+          </div>
+
+          <button class="calculate-btn" onclick="calculateMD1()">
+            Calcular M/D/1
+          </button>
+          <div id="results_md1" class="results" style="display: none"></div>
+        </div>
+      </div>
     </div>
-</body>
-<script src="script.js"></script>
+  </body>
+  <script src="script.js"></script>
 </html>
