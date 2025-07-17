@@ -211,26 +211,67 @@ const calculateMM2SinSeleccion = (resultados) => {
     const N = lambda / ((1 - ro) * (lambda + (1-ro) * a));
 
     return {
-        'Utilización del Sistema (ρ)': ro,
+        'Utilización del Sistema (ρ)': `${ro.toFixed(4)} (${(ro * 100).toFixed(2)}%)`,
         'Número promedio de clientes en el sistema (Ls)': ls,
-        'Tiempo promedio que un cliente pasa en el sistema (Ws)': ws,
+        'Tiempo promedio que un cliente pasa en el sistema (Ws)': `${ws.toFixed(4)} horas (${(ws * 60).toFixed(2)} min)`,
         'Cantidad de clientes en la cola (Lq)': lq,
-        'Tiempo promedio de espera de un cliente (Wq)': wq,
-        'Probabilidad de que el sistema esté vacío (P₀)': Po,
-        'Probabilidad de que el sistema esté ocupado (Pc)': Pc,
-        'Número promedio de clientes en el sistema (N)': N,
+        'Tiempo promedio de espera de un cliente (Wq)': `${wq.toFixed(4)} horas (${(wq * 60).toFixed(2)} min)`,
+        'Probabilidad de que el sistema esté vacío (P₀)': `${Po.toFixed(4)} (${(Po * 100).toFixed(2)}%)`,
+        'ρ crítico (Pc)': Pc,
+        'Número promedio de clientes en el sistema (N)': N
     }
 }
 
 const calculateMM2ConSeleccion = (resultados) => {
     const { ro, ls, ws, lq, wq, mu1, mu2, lambda } = resultados;
-}
+
+    const mu = mu1 + mu2;
+    const r = mu2 / mu1;
+
+    // Calcular ρc resolviendo la cuadrática
+    const A = 1 + Math.pow(r, 2);
+    const B = -(2 + Math.pow(r, 2));
+    const C = -(2 * r - 1) * (1 + r);
+    const discriminante = B * B - 4 * A * C;
+
+    let Pc;
+    if (discriminante < 0) {
+        Pc = "No se pudo calcular (discriminante negativo)";
+    } else {
+        const sol1 = (-B + Math.sqrt(discriminante)) / (2 * A);
+        const sol2 = (-B - Math.sqrt(discriminante)) / (2 * A);
+        Pc = Math.max(sol1, sol2);
+    }
+
+    // Calcular a'
+    const aprima = ((2 * lambda + mu) * (mu1 * mu2)) / (mu * (lambda + mu2));
+
+    // Calcular P₀
+    const Po = (1 - ro) / (1 - ro + (lambda / aprima));
+
+    // Calcular N
+    const N = lambda / ((1 - ro) * (lambda + (1 - ro) * aprima));
+
+    return {
+        'Utilización del Sistema (ρ)': `${ro.toFixed(4)} (${(ro * 100).toFixed(2)}%)`,
+        'Número promedio de clientes en el sistema (Ls)': ls,
+        'Tiempo promedio que un cliente pasa en el sistema (Ws)': `${ws.toFixed(4)} horas (${(ws * 60).toFixed(2)} min)`,
+        'Cantidad de clientes en la cola (Lq)': lq,
+        'Tiempo promedio de espera de un cliente (Wq)': `${wq.toFixed(4)} horas (${(wq * 60).toFixed(2)} min)`,
+        'Probabilidad de que el sistema esté vacío (P₀)': `${Po.toFixed(4)} (${(Po * 100).toFixed(2)}%)`,
+        'ρ crítico (Pc)': Pc,
+        'Número promedio de clientes en el sistema (N)': N
+    };
+};
+
+
+
 
 // M/G/1
 function calculateMG1() {
     const lambda = parseFloat(document.getElementById('lambda_mg1').value);
     const es = parseFloat(document.getElementById('es_mg1').value);
-    const varianza = parseFloat(document.getElementById('sigma_mg1').value); // ya es varianza σ²
+    const varianza = parseFloat(document.getElementById('sigma_mg1').value);
 
     // Validación
     if (isNaN(lambda) || isNaN(es) || isNaN(varianza) || lambda <= 0 || es <= 0 || varianza <= 0) {
@@ -247,8 +288,8 @@ function calculateMG1() {
     }
 
     // Cálculos según fórmula del apunte
-    const en = (rho / (1 - rho)) * (1 - (rho / 2) * (1 - mu ** 2 * varianza));
-    const et = en / lambda;
+    const en = (rho / (1 - rho)) * (1 - (rho / 2) * (1 - mu ** 2 * varianza ** 2));
+    const et = (1 / (mu * (1 - rho))) * (1 - (rho / 2) * (1 - mu ** 2 * varianza ** 2));
 
     const results = {
         'Utilización del Sistema (ρ)': `${rho.toFixed(2)} (${(rho * 100).toFixed(2)}%)`,
