@@ -1,5 +1,7 @@
 "use strict";
 
+
+// Cambia el modelo que se está visualizando
 function selectModel(model) {
     // ocultar modulo de calculadora
     document.querySelectorAll('.calculator-section').forEach(section => {
@@ -65,7 +67,7 @@ function calculateMM1() {
     // formulas m/m/1
     const rho = lambda / mu;
     const p0 = 1 - rho;
-    const pn = (1 - lambda / mu) - (lambda / mu) ** 2;
+   // const pn = (1 - lambda / mu) - (lambda / mu) ** 2;
     const ls = lambda / (mu - lambda);
     const ws = 1 / (mu - lambda);
     const lq = (lambda ** 2) / (mu * (mu - lambda));
@@ -77,8 +79,8 @@ function calculateMM1() {
         'Número promedio de clientes en el sistema (Ls)': ls,
         'Tiempo promedio que un cliente pasa en el sistema (Ws)': `${ws.toFixed(4)} horas (${(ws * 60).toFixed(2)} minutos)`,
         'Cantidad de clientes en la cola (Lq)': lq,
-        'Tiempo promedio de espera de un cliente (Wq)': `${wq.toFixed(4)} horas (${(wq * 60).toFixed(2)} minutos)`,
-        [`Probabilidad de que haya ${lambda} clientes en el sistema`]: `${pn.toFixed(4)} (${(pn * 100).toFixed(2)}%)`
+        'Tiempo promedio de espera de un cliente (Wq)': `${wq.toFixed(4)} horas (${(wq * 60).toFixed(2)} minutos)`
+        //[`Probabilidad de que haya ${lambda} clientes en el sistema`]: `${pn.toFixed(4)} (${(pn * 100).toFixed(2)}%)`
     };
 
     showResults('results_mm1', results);
@@ -100,7 +102,7 @@ function calculateMM1N() {
     //formulas basicas
 
     const rho = lambda / mu;
-    const p0 = (1 - rho) / (1 - Math.pow(rho, n + 1));
+    const p0 = (1 - rho) / (1 - Math.pow(rho, n + 1)); 
     const pn = Math.pow(rho, n) * p0;
     const lambda_efectiva = lambda * (1 - pn);
     const rho_efectiva = lambda_efectiva / mu;
@@ -212,13 +214,12 @@ const calculateMM2SinSeleccion = (resultados) => {
 
     return {
         'Utilización del Sistema (ρ)': `${ro.toFixed(4)} (${(ro * 100).toFixed(2)}%)`,
-        'Número promedio de clientes en el sistema (Ls)': ls,
+        'Número promedio de clientes en el sistema (N / Ls)': ls,
         'Tiempo promedio que un cliente pasa en el sistema (Ws)': `${ws.toFixed(4)} horas (${(ws * 60).toFixed(2)} min)`,
         'Cantidad de clientes en la cola (Lq)': lq,
         'Tiempo promedio de espera de un cliente (Wq)': `${wq.toFixed(4)} horas (${(wq * 60).toFixed(2)} min)`,
         'Probabilidad de que el sistema esté vacío (P₀)': `${Po.toFixed(4)} (${(Po * 100).toFixed(2)}%)`,
         'ρ crítico (Pc)': Pc,
-        'Número promedio de clientes en el sistema (N)': N
     }
 }
 
@@ -330,3 +331,71 @@ function calculateMD1() {
   showResults('results_md1', results);
 }
 
+
+function generateMuInputs() {
+    const numServers = parseInt(document.getElementById('num_servers').value);
+    const container = document.getElementById('mu_inputs_container_server');
+    container.innerHTML = ''; 
+
+    for (let i = 1; i <= numServers; i++) {
+        const div = document.createElement('div');
+        div.className = 'form-field';
+        div.innerHTML = `
+            <label>Tasa de Servicio Servidor ${i} (μ${i})</label>
+            <input type="number" id="mu_multiserver_${i}" min="0" placeholder="Ej: 5" />
+        `;
+        container.appendChild(div);
+    }
+}
+
+function analyzeServer() {
+    const numServers = parseInt(document.getElementById('num_servers').value);
+    const lambda = parseFloat(document.getElementById('lambda_server').value);
+
+    let totalMu = 0;
+    const muValues = [];
+    let allMuValid = true;
+
+    for (let i = 1; i <= numServers; i++) {
+        const muInput = document.getElementById(`mu_multiserver_${i}`);
+        const mu = parseFloat(muInput.value);
+
+        if (isNaN(mu) || mu <= 0) {
+            allMuValid = false;
+            break;
+        }
+
+        muValues.push(mu);
+        totalMu += mu;
+
+    }
+
+    if (isNaN(lambda) || lambda <= 0 || !allMuValid) {
+        showError('results_server', 'Ingresa un número de servidores actuales válido. También acuerdate de ingresar valores válidos y mayores a 0 para λ, y todas las μ. La Utilización actual del sistema(ρ) debe ser entre 0 y 1 (exclusivo).');
+        return;
+    }
+
+    const actual_rho = lambda / totalMu;
+
+    let recommendation = "";
+
+
+    if (actual_rho >= 1) {
+        recommendation = `El sistema actual (${(actual_rho * 100).toFixed(2)}%) es inestable. Es CRÍTICO agregar más servidores o mejorar los existentes.`;
+    } else {
+        recommendation = `La utilización actual del sistema (${(actual_rho * 100).toFixed(2)}%) es estable. NO es necesario agregar un servidor.`;
+    }
+
+
+
+    const results = {
+        'Número de Servidores Actuales (c)': numServers,
+        'Tasa de Llegadas (λ)': lambda,
+        'Tasas de Servicio (μ_i)': muValues.map(m => m.toFixed(2)).join(', '),
+        'Tasa de Servicio Total (μi)': totalMu.toFixed(2),
+        'Utilización Actual del Sistema (ρ)': `${actual_rho.toFixed(2)} (${(actual_rho * 100).toFixed(2)}%)`,
+        'Recomendación': recommendation
+    };
+
+    showResults('results_server', results);
+}

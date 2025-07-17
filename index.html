@@ -26,6 +26,7 @@
           <button class="model-btn" onclick="selectModel('mm2')">M/M/2</button>
           <button class="model-btn" onclick="selectModel('mg1')">M/G/1</button>
           <button class="model-btn" onclick="selectModel('md1')">M/D/1</button>
+          <button class="model-btn" onclick="selectModel('server-analysis')">¿Hace falta otro servidor?</button>
         </div>
 
         <!--Calculadora M/M/1-->
@@ -270,8 +271,56 @@
 
           <button class="calculate-btn" onclick="calculateMD1()">
             Calcular M/D/1
-          </button>
+          </button> 
           <div id="results_md1" class="results" style="display: none"></div>
+        </div>
+
+        <div id="server-analysis" class="calculator-section">
+          <div class="formula-info">
+            <h4>Análisis Servidor/es</h4>
+            <p>Evalúa la necesidad de agregar un servidor adicional (o mejorar los actuales)
+              básandose en la utilización actual del sistema
+            </p>
+          </div>
+
+          <div class="form-grid">
+            <div class="input-group">
+              <h3>Parámetros del Sistema Actual (en horas)</h3>
+              
+              <div class="form-field">
+                <label>Número de Servidores Actuales</label>
+                <select id="num_servers" onchange="generateMuInputs()">
+                  <option value="" disabled selected>Seleccionar</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                </select>
+              </div>
+
+              <div id="mu_inputs_container_server">
+
+              </div>
+
+              <div class="form-field">
+                <label>Tasa de Llegada (λ)</label>
+                <input
+                  type="number"
+                  id="lambda_server"
+                  min="0"
+                  placeholder="Ej: 10"
+                />
+              </div>
+
+            </div>
+          </div>
+
+          <button class="calculate-btn" onclick="analyzeServer()">
+            Analizar Sistema
+          </button>
+
+          <div id="results_server" class="results" style="display: none">
+
+          </div>
         </div>
       </div>
     </div>
