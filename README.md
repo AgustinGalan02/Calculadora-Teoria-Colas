@@ -1,1 +1,2 @@
 # Calculadora-Teoria-Colas
+Herramienta interactiva que permite analizar distintos modelos de teoría de colas como M/M/1 (un servidor con capacidad infinita), M/M/1/N (un servidor con capacidad finita), M/M/2 (dos servidores), M/G/1 (un servidor con tiempo de servicio general), M/D/1 (un servidor con tiempo de servicio determinístico) y análisis de capacidad de servidores para determinar si el sistema es estable con la cantidad actual de servidores.
