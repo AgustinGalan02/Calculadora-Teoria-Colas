@@ -229,18 +229,24 @@ const calculateMM2ConSeleccion = (resultados) => {
     const mu = mu1 + mu2;
     const r = mu2 / mu1;
 
-    // Calcular ρc resolviendo la cuadrática
+    // coeficientes de una ecuación cuadrática A·x² + B·x + C = 0
     const A = 1 + Math.pow(r, 2);
     const B = -(2 + Math.pow(r, 2));
     const C = -(2 * r - 1) * (1 + r);
+
+    // discriminante de la ecuación cuadrática
     const discriminante = B * B - 4 * A * C;
 
     let Pc;
+    //Si el discriminante es negativo, no hay solución real
     if (discriminante < 0) {
         Pc = "No se pudo calcular (discriminante negativo)";
     } else {
+        //Si el discriminante es positivo o cero, se calculan las dos soluciones reales
         const sol1 = (-B + Math.sqrt(discriminante)) / (2 * A);
         const sol2 = (-B - Math.sqrt(discriminante)) / (2 * A);
+
+        //Se toma la solución más grande (porque es la mas realista posible)
         Pc = Math.max(sol1, sol2);
     }
 
