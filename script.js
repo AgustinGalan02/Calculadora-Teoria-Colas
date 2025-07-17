@@ -92,39 +92,78 @@ function calculateMM1N() {
     const mu = parseFloat(document.getElementById('mu_mm1n').value);
     const n = parseFloat(document.getElementById('n_mm1n').value);
 
-    //validar inputs
-    if (isNaN(lambda) || isNaN(mu) || isNaN(n) ||lambda <= 0 || mu <= 0 || n <= 0) {
-        showError('results_mm1n', 'Ingresar valores mayores a 0 para λ y μ');
+    if (isNaN(lambda) || isNaN(mu) || isNaN(n) || lambda <= 0 || mu <= 0 || n <= 0) {
+        showError('results_mm1n', 'Ingresá valores válidos para λ, μ y N (mayores a 0)');
         return;
     }
 
-    // validar que el sistema sea estable
-    if (lambda >= mu) {
-        showError('results_mm1n', 'Recorda que para que el sistema sea estable, <b>λ</b> debe ser menor que <b>μ</b>');
-        return
+    //formulas basicas
+
+    const rho = lambda / mu;
+    const p0 = (1 - rho) / (1 - Math.pow(rho, n + 1));
+    const pn = Math.pow(rho, n) * p0;
+    const lambda_efectiva = lambda * (1 - pn);
+    const rho_efectiva = lambda_efectiva / mu;
+    const rendimiento_salida = mu - (mu * p0);
+
+    // formulas dependiendo si p es igual o no a 1
+
+    // LS
+    let ls;
+    if (rho === 1) {
+        ls = n / 2;
+    } else {
+        ls = (rho / (1 - rho)) - ((n + 1) * Math.pow(rho, n + 1)) / (1 - Math.pow(rho, n + 1));
     }
 
-    // formulas m/m/1
-    const rho = lambda / mu;
-    const p0 = 1 - rho;
-    const pn = (1 - lambda / mu) - (lambda / mu) ** 2;
-    const ls = lambda / (mu - lambda);
-    const ws = 1 / (mu - lambda);
-    const lq = (lambda ** 2) / (mu * (mu - lambda));
-    const wq = lambda / (mu * (mu - lambda));
+    // LQ
+    let lq;
+    if (rho === 1) {
+        lq = ls - (1 - Math.pow(rho, n)) / (1 - Math.pow(rho, n + 1));
+    } else {
+        lq = (n * (n - 1)) / (2 * (n + 1));
+    }
+
+    // WS Y WQ
+    const ws = ls / lambda_efectiva;
+    const wq = lq / lambda_efectiva;
+
+    // Pb y Z
+    const pb = Math.pow(rho, n) * (1 - rho) / (1 - Math.pow(rho, n + 1));
+    const z = lambda * pb;
+
+    //rendimiento de entrada
+    const rendimiento_entrada = lambda - z;
+
+    // validacion para que si hay un resultado invalido se muestre error en vez de calcular
+    const valuesToCheck = [rho, p0, pn, lambda_efectiva, rho_efectiva, ls, lq, ws, wq, pb, z];
+
+    const hasInvalid = valuesToCheck.some(value => !isFinite(value) || isNaN(value));
+
+    if (hasInvalid) {
+    showError('results_mm1n', 'Los cálculos no se pueden realizar con estos valores. Tus resultados van a ser inválidos. Reducí λ o aumentá μ');
+    return;
+    }
 
     const results = {
-        'Utilización del Sistema (ρ)': rho,
-        'Probabilidad de que el sistema esté vacío (P₀)': `${p0.toFixed(4)} (${(p0 * 100).toFixed(2)}%)`,
-        'Número promedio de clientes en el sistema (Ls)': ls,
-        'Tiempo promedio que un cliente pasa en el sistema (Ws)': `${ws.toFixed(4)} horas (${(ws * 60).toFixed(2)} minutos)`,
-        'Cantidad de clientes en la cola (Lq)': lq,
-        'Tiempo promedio de espera de un cliente (Wq)': `${wq.toFixed(4)} horas (${(wq * 60).toFixed(2)} minutos)`,
-        [`Probabilidad de que haya ${lambda} clientes en el sistema`]: `${pn.toFixed(4)} (${(pn * 100).toFixed(2)}%)`
+        'Utilización del Sistema (ρ)': `${rho.toFixed(4)} (${(rho * 100).toFixed(2)}%)`,
+        'Utilización efectiva del sistema (λ̄ )': rho_efectiva.toFixed(4),
+        'Probabilidad de que el sistema esté lleno (Pn)': `${pn.toFixed(4)} (${(pn * 100).toFixed(2)}%)`,
+        'Probabilidad de que el sistema esté vacío (P0)': `${p0.toFixed(4)} (${(p0 * 100).toFixed(2)}%)`,
+        'Tasa de llegada efectiva (λ̄)': lambda_efectiva.toFixed(4),
+        'Número promedio de clientes en el sistema (Ls)': ls.toFixed(4),
+        'Número promedio de clientes en cola (Lq)': lq.toFixed(4),
+        'Tiempo promedio en el sistema (Ws)': `${ws.toFixed(4)} horas (${(ws * 60).toFixed(2)} min)`,
+        'Tiempo promedio en cola (Wq)': `${wq.toFixed(4)} horas (${(wq * 60).toFixed(2)} min)`,
+        'Probabilidad de bloqueo (Pb)': `${pb.toFixed(4)} (${(pb * 100).toFixed(2)}%)`,
+        'Tasa de rechazo (Z)': z.toFixed(4),
+        'Rendimiento de salida': rendimiento_salida.toFixed(4),
+        'Rendimiento de entrada': rendimiento_entrada.toFixed(4)
+        
     };
 
     showResults('results_mm1n', results);
-}
+};
 
 // M/M/2
 function calculateMM2() {
