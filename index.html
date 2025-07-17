@@ -113,6 +113,68 @@
         </div>
 
         <!--Calculadora M/M/2-->
+        <div id="mm2" class="calculator-section">
+          <div class="formula-info">
+            <h4>Modelo M/M/2</h4>
+            <p>
+              Sistema con <b>dos servidores</b> y <b>llegadas Poisson</b>, con
+              tiempos de servicio <b>exponenciales</b> y capacidad
+              <b>infinita</b>.
+            </p>
+            <p class="p-mm2">
+              <strong>Se consideran dos configuraciones posibles:</strong>
+            </p>
+            <ul>
+              <li>
+                <b>Sin selección de servidor:</b> si ambos están libres, el
+                cliente elige cualquiera con igual probabilidad.
+              </li>
+              <li>
+                <b>Con selección de servidor:</b> si ambos están libres, el
+                cliente siempre va al servidor más rápido.
+              </li>
+            </ul>
+          </div>
+          <div class="form-grid">
+            <div class="input-group">
+              <h3>Parametros del Sistema (en horas)</h3>
+
+              <div class="form-field">
+                <label>Seleccionar tipo de mm2</label>
+                <select id="mm2_type">
+                  <option value="sin" selected>Sin selección de servidor</option>
+                  <option value="con">Con selección de servidor</option>
+                </select>
+              </div>
+              <!--lambda-->
+              <div class="form-field">
+                <label>Tasa de Llegadas (λ)</label>
+                <input
+                  type="number"
+                  id="lambda_mm2"
+                  min="0"
+                  placeholder="Ej: 2"
+                />
+              </div>
+
+              <!--mu1-->
+              <div class="form-field">
+                <label>Tasa de Servicio (μ1)</label>
+                <input type="number" id="mu_mm21" min="0" placeholder="Ej: 5" />
+              </div>
+              <!--mu1-->
+              <div class="form-field">
+                <label>Tasa de Servicio (μ2)</label>
+                <input type="number" id="mu_mm22" min="0" placeholder="Ej: 5" />
+              </div>
+            </div>
+          </div>
+          <!--boton para calcular-->
+          <button class="calculate-btn" onclick="calculateMM2()">
+            Calcular M/M/2
+          </button>
+          <div id="results_mm2" class="results" style="display: none"></div>
+        </div>
 
         <!--Calculadora M/G/1-->
         <div id="mg1" class="calculator-section">

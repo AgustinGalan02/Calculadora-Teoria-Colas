@@ -126,23 +126,68 @@ function calculateMM1N() {
     showResults('results_mm1n', results);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // M/M/2
+function calculateMM2() {
+    const lambda = parseFloat(document.getElementById('lambda_mm2').value);
+    const mu1 = parseFloat(document.getElementById('mu_mm21').value);
+    const mu2 = parseFloat(document.getElementById('mu_mm22').value);
+    const tipomm2 = document.getElementById('mm2_type').value;
+    
+        // Validación
+    if (isNaN(lambda) || isNaN(lambda) || isNaN(mu1) || isNaN(mu2) || lambda <= 0 || mu1 <= 0 || mu2 <= 0) {
+        showError('results_mm2', 'Ingresá valores válidos y mayores a 0 para λ, μ1 y μ2.');
+        return;
+    }
+
+    // Mu sub s. Dependiendo la velocidad de los servidores, se suma o multiplica
+    let Us = mu1 == mu2 ? 2 * mu1 : mu1 + mu2;
+
+   const ro = lambda / Us;
+   const ls = (ro) / (1 - ro);
+   const ws = ls / lambda;
+   const lq = (ro ** 2) / (1 - ro);
+   const wq = lq / lambda;
+
+    const resultados = { ro, ls, ws, lq, wq, mu1, mu2, lambda };
+
+    if (tipomm2 == "sin") {
+        const results = calculateMM2SinSeleccion(resultados);
+        return showResults('results_mm2', results);
+    }
+    const results = calculateMM2ConSeleccion(resultados);
+    return showResults('results_mm2', results);
+}
+
+const calculateMM2SinSeleccion = (resultados) => {
+    const { ro, ls, ws, lq, wq, mu1, mu2, lambda } = resultados;
+
+    
+    const a = (2 * mu1 * mu2) / (mu1 + mu2);
+    const r = mu2 > mu1 ? (mu2 / mu1) : (mu1 / mu2);
+
+    const Po = (1 - ro) / (1 - ro + lambda / a);
+    const Pc = 1 - Math.sqrt((r * (1 + r)) / (1 + r ** 2));
+
+    // const N = ((1 - p0) / p0) + ((1 - p0) * a);
+    const N = lambda / ((1 - ro) * (lambda + (1-ro) * a));
+
+    return {
+        'Utilización del Sistema (ρ)': ro,
+        'Número promedio de clientes en el sistema (Ls)': ls,
+        'Tiempo promedio que un cliente pasa en el sistema (Ws)': ws,
+        'Cantidad de clientes en la cola (Lq)': lq,
+        'Tiempo promedio de espera de un cliente (Wq)': wq,
+        'Probabilidad de que el sistema esté vacío (P₀)': Po,
+        'Probabilidad de que el sistema esté ocupado (Pc)': Pc,
+        'Número promedio de clientes en el sistema (N)': N,
+    }
+}
+
+const calculateMM2ConSeleccion = (resultados) => {
+    const { ro, ls, ws, lq, wq, mu1, mu2, lambda } = resultados;
+}
 
 // M/G/1
-// M/G/1 (versión solo en horas)
 function calculateMG1() {
     const lambda = parseFloat(document.getElementById('lambda_mg1').value);
     const es = parseFloat(document.getElementById('es_mg1').value);
