@@ -1,5 +1,3 @@
-![Logo](miniatura.png)
-
 # 🧮 Calculadora de Teoría de Colas
 
 Herramienta interactiva que permite analizar distintos modelos de teoría de colas:
@@ -22,7 +20,10 @@ Herramienta interactiva que permite analizar distintos modelos de teoría de col
 - [@AgustinGalan02](https://www.github.com/AgustinGalan02)
 - [@estefano99](https://www.github.com/estefano99)
 
-## Badges
+##Screenshots
+![Logo](miniatura.png)
+
+## 
 
 [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
 
