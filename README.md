@@ -20,7 +20,7 @@ Herramienta interactiva que permite analizar distintos modelos de teoría de col
 - [@AgustinGalan02](https://www.github.com/AgustinGalan02)
 - [@estefano99](https://www.github.com/estefano99)
 
-##Screenshots
+## Screenshots
 ![Logo](miniatura.png)
 
 ## 
